@@ -48,7 +48,10 @@ class CUParser(object):
         :param show_unit:
         :return:
         """
-
+        if not s:
+            if show_unit:
+                return None, None
+            return None
         if not unit_regex_list:
             unit_regex_list = []
         unit_regex_list = [(re.compile(regex), _unit) for regex, _unit in
