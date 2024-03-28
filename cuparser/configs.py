@@ -38,4 +38,11 @@ ALL_UNIT_REGEX = [
 ]
 ALL_UNIT_REGEX = [(re.compile(regex), unit) for regex, unit in ALL_UNIT_REGEX]
 
-NUMBER_REGEX = re.compile(r'\d+[(,\d{3})]*[(\\.\d+)]*')
+NUMBER_REGEX = re.compile(r'\d+\.?\d*')
+
+SUB_REGEX_LIST = [
+    re.compile(r'[^0-9.]'),
+]
+CLEAR_REGEX_LIST = [
+    re.compile(r'\s*,\s*'),
+]

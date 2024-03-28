@@ -6,6 +6,7 @@
 import re
 
 from .configs import ALL_UNIT_REGEX, NUMBER_REGEX, UNIT_MAP
+from .configs import CLEAR_REGEX_LIST, SUB_REGEX_LIST
 
 
 class CUParser(object):
@@ -19,9 +20,17 @@ class CUParser(object):
 
     @classmethod
     def parse_num(cls, s, regex=NUMBER_REGEX):
+        for _regex in CLEAR_REGEX_LIST:
+            s = _regex.sub('', s)
+        for _regex in SUB_REGEX_LIST:
+            s = _regex.sub('@', s)
         nums = regex.findall(s)
-        if nums:
-            return nums[0].replace(',', '')
+        if not nums:
+            return
+        try:
+            return float(nums[0])
+        except:
+            pass
 
     @classmethod
     def _return(cls, num, unit, show_unit):
@@ -44,13 +53,12 @@ class CUParser(object):
             unit_regex_list = []
         unit_regex_list = [(re.compile(regex), _unit) for regex, _unit in
                            unit_regex_list]
-        result_unit = UNIT_MAP.get(unit) or cls.parse_unit(
+        result_unit = unit if unit in UNIT_MAP else None or cls.parse_unit(
             unit, unit_regex_list) or cls.parse_unit(unit) or cls.parse_unit(
             s, unit_regex_list) or cls.parse_unit(s)
         num = cls.parse_num(s)
         if not num:
             return cls._return(num, result_unit, show_unit)
-        num = float(num)
         return cls._return(
             round(num * UNIT_MAP[result_unit],
                   2) if result_unit in UNIT_MAP else num, result_unit,
